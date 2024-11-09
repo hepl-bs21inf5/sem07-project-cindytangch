@@ -72,13 +72,13 @@ icons -> App.vue, `<i class="..."></i>`, https://icons.getbootstrap.com/
 >   - `ref` est fixe et `computed`varie ?
 >   - Comment implémenter le compteur ?
 
-> - Que se passe-t-il lorsqu'on clique sur le bouton "Terminer" ?
->   - Appel de la fonction `submit`
+- Que se passe-t-il lorsqu'on clique sur le bouton "Terminer" ?
+  - Appel de la fonction `submit`
 
-- Qu'est-ce qu'un `v-model` ?
+> - Qu'est-ce qu'un `v-model` ?
 
-  - `v-model` peut être utilisé sur un composant pour implémenter une liaison à double sens.
-  - https://fr.vuejs.org/guide/components/v-model
+>  - `v-model` peut être utilisé sur un composant pour implémenter une liaison à double sens.
+>  - https://fr.vuejs.org/guide/components/v-model
 
 - À quoi sert le `:class="{ disabled: !filled }"` ?
   - On ne peut pas appuyer sur le bouton Terminer si pas toutes les questions sont remplies.
