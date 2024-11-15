@@ -141,3 +141,5 @@ Temps passé : 1 heure
 Comment comparer deux tableaux ?
 
 `if (Object.values(q2.value).sort().toString() === ['a21', 'a24'].sort().toString())`
+
+changer la déclaration du type : `const model = defineModel<string[]>()`

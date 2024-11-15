@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineModel, defineProps, type PropType } from 'vue'
 
-const model = defineModel<string | null>()
+const model = defineModel<string[]>()
 const props = defineProps({
   id: { type: String, required: true },
   text: { type: String, required: true },
