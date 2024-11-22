@@ -4,38 +4,22 @@ import QuestionRadio from '@/components/QuestionRadio.vue'
 import QuestionText from '@/components/QuestionText.vue'
 import QuestionCheckbox from '@/components/QuestionCheckbox.vue'
 
+const correctAnswers = ref<boolean[]>([])
 const q1 = ref<string | null>(null)
 const q2 = ref<string[]>([])
 const q3 = ref<string | null>(null)
 const q4 = ref<string | null>(null)
 const filled = computed<boolean>(
-  () => q1.value !== null && Object.keys(q2).length !== 0 && q3.value !== null,
+  () =>
+    q1.value !== null &&
+    Object.keys(q2).length !== 0 &&
+    q3.value !== null &&
+    q4.value !== null,
 )
-
-function submit(event: Event): void {
-  event.preventDefault()
-  const count = ref<number>(0)
-
-  const n_questions = 3
-  if (q1.value === 'a11') {
-    count.value += 1
-  }
-  if (
-    Object.values(q2.value).sort().toString() ===
-    ['a21', 'a24'].sort().toString()
-  ) {
-    count.value += 1
-  }
-  if (q3.value === 'a32') {
-    count.value += 1
-  }
-  if (filled.value) {
-    alert(`Score : ${count.value}/${n_questions}`)
-    if (count.value === n_questions) {
-      alert(`Bravo !`)
-    }
-  }
-}
+const score = computed<number>(
+  () => correctAnswers.value.filter(value => value).length,
+)
+const totalScore = computed<number>(() => correctAnswers.value.length)
 
 function reset(): void {
   q1.value = null
@@ -46,10 +30,11 @@ function reset(): void {
 </script>
 
 <template>
-  <form @submit="submit">
+  <form>
     <QuestionRadio
       id="q1"
-      v-model="q1"
+      v-model="correctAnswers[0]"
+      answer="a11"
       text="Le marcophage est ..."
       :options="[
         { value: 'a11', text: 'une cellule de l\'immunité innée.' },
@@ -60,7 +45,8 @@ function reset(): void {
     />
     <QuestionCheckbox
       id="q2"
-      v-model="q2"
+      v-model="correctAnswers[1]"
+      :answer="['a21', 'a24']"
       text="Quelles cellules effectuent la phagocytose ?"
       :options="[
         { value: 'a21', text: 'La cellule dendritique.' },
@@ -71,7 +57,8 @@ function reset(): void {
     />
     <QuestionRadio
       id="q3"
-      v-model="q3"
+      v-model="correctAnswers[2]"
+      answer="a33"
       text="Le lymphocyte T cytotoxique..."
       :options="[
         { value: 'a31', text: 'produit des anticorps.' },
@@ -82,7 +69,8 @@ function reset(): void {
     />
     <QuestionText
       id="q4"
-      v-model="q4"
+      v-model="correctAnswers[3]"
+      :answer="['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']"
       text="Combien de parties avez-vous jouées ?"
       placeholder="Veuillez saisir un nombre"
     />
@@ -94,5 +82,7 @@ function reset(): void {
       Terminer
     </button>
     <button class="btn btn-secondary" @click="reset">Réinitialiser</button>
+    <div>Réponses correctes : {{ correctAnswers }}</div>
+    <div>Score : {{ score }} / {{ totalScore }}</div>
   </form>
 </template>

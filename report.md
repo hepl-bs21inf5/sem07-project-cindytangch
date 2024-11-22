@@ -143,3 +143,100 @@ Comment comparer deux tableaux ?
 `if (Object.values(q2.value).sort().toString() === ['a21', 'a24'].sort().toString())`
 
 changer la déclaration du type : `const model = defineModel<string[]>()`
+
+## Semaine 3
+
+### Réponse
+
+Temps estimé : 45 minutes
+
+Temps passé : 1h40
+
+#### Notes
+
+`computed` = `ref`+ `watch`
+
+Générique : pour que la fonction puisse prendre différents types et comprendre ce qu'elle doit retourner.
+
+```
+function doubler<T>(value: T): Bleu<T> {
+  if (typeof value === "string") {
+    return value + value;
+  } else {
+  return value \* 2;
+  }
+}
+
+interface QuestionText<T> {
+  value: T
+}
+
+doubler("qwe") // "qweqwe"
+doubler(3) // 6
+doubler(5)
+```
+
+```
+const answer = computed<string>(() => {
+  return Object.values(props.answer).sort().toString()
+})
+```
+
+-> utiliser computed pour les réponses correctes au lieu de vérifier la condition dans watch pour éviter que answer recalculé à chaque que l'utilisateur change de valeur.
+
+~~`answer="[2, 3]"`~~ `:answer="['2', '3']"` -> pour que ce soit interpreté comme une liste de strings et pas un seul string
+
+#### Question
+
+À quoi sert l'option immediate: true dans le watch ? Que se passe-t-il si on l'enlève ou si on met immediate: false ?
+
+A mettre à jour les `correctAnswers` quand les variables dedans changent.
+
+### Score
+
+Temps estimé : 45 minutes
+
+Temps passé : 15 minutes
+
+#### Notes
+
+Anciennes parties enlevées
+
+```
+function submit(event: Event): void {
+  event.preventDefault()
+  const count = ref<number>(0)
+
+  const n_questions = 3
+  if (q1.value === 'a11') {
+    count.value += 1
+  }
+  if (
+    Object.values(q2.value).sort().toString() ===
+    ['a21', 'a24'].sort().toString()
+  ) {
+    count.value += 1
+  }
+  if (q3.value === 'a32') {
+    count.value += 1
+  }
+  if (filled.value) {
+    alert(`Score : ${count.value}/${n_questions}`)
+    if (count.value === n_questions) {
+      alert(`Bravo !`)
+    }
+  }
+}
+```
+
+```
+<button
+      class="btn btn-primary"
+      :class="{ disabled: !filled }"
+      type="submit"
+    >
+      Terminer
+    </button>
+```
+
+`<form @submit="submit">`

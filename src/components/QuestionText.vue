@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { defineModel, defineProps } from 'vue'
+import { ref, watch, type PropType } from 'vue'
 
-const model = defineModel<string | null>()
+const model = defineModel<boolean>()
 const props = defineProps({
   id: { type: String, required: true },
   text: { type: String, required: true },
+  answer: {
+    type: Array as PropType<Array<string>>,
+    required: true,
+  },
   placeholder: { type: String, required: true },
 })
+
+const value = ref<string>('')
+
+watch(
+  value,
+  newValue => {
+    model.value = props.answer.includes(newValue)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -14,7 +28,7 @@ const props = defineProps({
   <div class="form-label">
     <input
       :id="props.id"
-      v-model="model"
+      v-model="value"
       class="form-control"
       :placeholder="props.placeholder"
     />
