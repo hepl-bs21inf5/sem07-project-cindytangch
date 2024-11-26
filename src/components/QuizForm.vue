@@ -3,29 +3,32 @@ import { computed, ref } from 'vue'
 import QuestionRadio from '@/components/QuestionRadio.vue'
 import QuestionText from '@/components/QuestionText.vue'
 import QuestionCheckbox from '@/components/QuestionCheckbox.vue'
+import { QuestionState } from '@/utils/models'
 
-const correctAnswers = ref<boolean[]>([])
-const q1 = ref<string | null>(null)
-const q2 = ref<string[]>([])
-const q3 = ref<string | null>(null)
-const q4 = ref<string | null>(null)
-const filled = computed<boolean>(
-  () =>
-    q1.value !== null &&
-    Object.keys(q2).length !== 0 &&
-    q3.value !== null &&
-    q4.value !== null,
+const questionStates = ref<QuestionState[]>([])
+const filled = computed<boolean>(() =>
+  questionStates.value.every(state => state === QuestionState.Fill),
+)
+const submitted = computed<boolean>(() =>
+  questionStates.value.every(
+    state => state === QuestionState.Correct || state === QuestionState.Wrong,
+  ),
 )
 const score = computed<number>(
-  () => correctAnswers.value.filter(value => value).length,
+  () =>
+    questionStates.value.filter(state => state === QuestionState.Correct)
+      .length,
 )
-const totalScore = computed<number>(() => correctAnswers.value.length)
+const totalScore = computed<number>(() => questionStates.value.length)
 
-function reset(): void {
-  q1.value = null
-  q2.value = []
-  q3.value = null
-  q4.value = null
+function reset(event: Event): void {
+  event.preventDefault()
+  questionStates.value = questionStates.value.map(() => QuestionState.Empty)
+}
+
+function submit(event: Event): void {
+  event.preventDefault()
+  questionStates.value = questionStates.value.map(() => QuestionState.Submit)
 }
 </script>
 
@@ -33,7 +36,7 @@ function reset(): void {
   <form>
     <QuestionRadio
       id="q1"
-      v-model="correctAnswers[0]"
+      v-model="questionStates[0]"
       answer="a11"
       text="Le marcophage est ..."
       :options="[
@@ -45,7 +48,7 @@ function reset(): void {
     />
     <QuestionCheckbox
       id="q2"
-      v-model="correctAnswers[1]"
+      v-model="questionStates[1]"
       :answer="['a21', 'a24']"
       text="Quelles cellules effectuent la phagocytose ?"
       :options="[
@@ -57,7 +60,7 @@ function reset(): void {
     />
     <QuestionRadio
       id="q3"
-      v-model="correctAnswers[2]"
+      v-model="questionStates[2]"
       answer="a33"
       text="Le lymphocyte T cytotoxique..."
       :options="[
@@ -69,7 +72,7 @@ function reset(): void {
     />
     <QuestionText
       id="q4"
-      v-model="correctAnswers[3]"
+      v-model="questionStates[3]"
       :answer="['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']"
       text="Combien de parties avez-vous jouées ?"
       placeholder="Veuillez saisir un nombre"
@@ -77,12 +80,12 @@ function reset(): void {
     <button
       class="btn btn-primary"
       :class="{ disabled: !filled }"
-      type="submit"
+      @click="submit"
     >
       Terminer
     </button>
     <button class="btn btn-secondary" @click="reset">Réinitialiser</button>
-    <div>Réponses correctes : {{ correctAnswers }}</div>
-    <div>Score : {{ score }} / {{ totalScore }}</div>
+    <div>Debug états : {{ questionStates }}</div>
+    <div v-if="submitted">Score : {{ score }} / {{ totalScore }}</div>
   </form>
 </template>

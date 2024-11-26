@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import QuestionRadio from '@/components/QuestionRadio.vue'
+import { QuestionState } from '@/utils/models'
 import { reactive, ref, computed } from 'vue'
 
 const questions = ref<
@@ -9,11 +10,13 @@ const questions = ref<
     incorrect_answers: string[]
   }[]
 >([])
-const correctAnswers = ref<boolean[]>([])
+const questionStates = ref<QuestionState[]>([])
 const score = computed<number>(
-  () => correctAnswers.value.filter(value => value).length,
+  () =>
+    questionStates.value.filter(state => state === QuestionState.Correct)
+      .length,
 )
-const totalScore = computed<number>(() => correctAnswers.value.length)
+const totalScore = computed<number>(() => questionStates.value.length)
 
 fetch('https://opentdb.com/api.php?amount=10&type=multiple')
   .then(response => response.json())
@@ -26,7 +29,7 @@ fetch('https://opentdb.com/api.php?amount=10&type=multiple')
       v-for="(question, index) in questions"
       :id="index.toString()"
       :key="index"
-      v-model="correctAnswers[index]"
+      v-model="questionStates[index]"
       :answer="question.correct_answer"
       :text="question.question"
       :options="[
@@ -38,6 +41,6 @@ fetch('https://opentdb.com/api.php?amount=10&type=multiple')
       ]"
     />
   </form>
-  <div>Réponses correctes : {{ correctAnswers }}</div>
+  <div>Réponses correctes : {{ questionStates }}</div>
   <div>Score : {{ score }} / {{ totalScore }}</div>
 </template>

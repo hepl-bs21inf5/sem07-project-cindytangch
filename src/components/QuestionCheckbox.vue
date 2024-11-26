@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, computed, type PropType } from 'vue'
+import { QuestionState } from '@/utils/models'
 
-const model = defineModel<boolean>()
+const model = defineModel<QuestionState>()
 const props = defineProps({
   id: { type: String, required: true },
   text: { type: String, required: true },
@@ -23,10 +24,22 @@ const answer = computed<string>(() => {
 watch(
   value,
   newValue => {
-    model.value = newValue.sort().toString() === answer.value
+    model.value =
+      newValue.length === 0 ? QuestionState.Empty : QuestionState.Fill
   },
   { immediate: true },
 )
+
+watch(model, newModel => {
+  if (newModel === QuestionState.Submit) {
+    model.value =
+      value.value.sort().toString() === answer.value
+        ? QuestionState.Correct
+        : QuestionState.Wrong
+  } else if (newModel === QuestionState.Empty) {
+    value.value = []
+  }
+})
 </script>
 
 <template>
@@ -39,6 +52,11 @@ watch(
       type="checkbox"
       :name="props.id"
       :value="option.value"
+      :disabled="
+        model === QuestionState.Submit ||
+        model === QuestionState.Correct ||
+        model === QuestionState.Wrong
+      "
     />
     <label class="form-check-label" :for="`${props.id}-${option.value}`">
       {{ option.text }}

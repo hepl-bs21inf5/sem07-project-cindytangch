@@ -240,3 +240,83 @@ function submit(event: Event): void {
 ```
 
 `<form @submit="submit">`
+
+## Semaine 4
+
+### Etats
+
+Temps estimé : 30 minutes
+
+Temps passé : 45 minutes
+
+#### Notes
+
+état, c'est fill et empty ou correct et wrong ?
+peut avoir deux états ?
+
+#### Questions
+
+```
+model.value =
+  value.value === props.answer ? QuestionState.Correct : QuestionState.Wrong;
+```
+
+=
+
+```
+if (value.value === props.answer) {
+  model.value = QuestionState.Correct
+} else {
+  model.value = QuestionState.Wrong
+}
+```
+
+Donc on pourrait aussi écrire
+
+```
+model.value = newValue === null ? QuestionState.Empty : QuestionState.Fill
+```
+
+à la place de
+
+```
+if (newValue === null) {
+      model.value = QuestionState.Empty
+    } else {
+      model.value = QuestionState.Fill
+    }
+```
+
+### Boutons
+
+Temps estimé : 30 minutes
+
+Temps passé : 30 minutes
+
+#### Notes
+
+C'est quoi la différence entre `<button type="submit">` et `<button @click="submit">` ?
+
+Nommer la variable `newModel` au lieu de `newValue` dans watch model serait plus logique ?
+
+- `watch` sur `value` : actualiser la valeur de model quand value change
+  - Quand l'utilisateur input une valeur -> l'état devient Fill
+- `watch` sur `model` : actualiser la valeur de value quand model change
+  - Quand on appelle la fonction reset, on change le model en Empty et on veut actualiser la valeur à la valeur de défaut
+  - Quand on appelle la fonction submit, on change le model en Submit et on veut actualiser la valeur à Correct ou Wrong
+
+model : état
+
+value : input de l'utilisateur
+
+- `Empty` : la question n'a pas été répondue.
+- `Fill` : la question a été répondue, mais pas été soumise pour correction.
+- `Submit` : la question a été soumise pour correction, mais pas encore corrigée.
+- `Correct` : la question est corrigée et la réponse est juste.
+- `Wrong` : la question est corrigée et la réponse est fausse.
+
+### Réponses immuables
+
+Temps estimé : 5 minutes
+
+Temps passé : 5 minutes
